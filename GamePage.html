@@ -53,20 +53,44 @@
         <h1>CSCI 491: Lab 1 - Simple Math Game</h1>
         <a class="lead">What is </a>
         <a id="problem"><br></a>
-        <input type="text" value="" size="30" maxlength="50">
+        <input type="text" id="answerField" value="" size="30" maxlength="50">
         <button type="button" id="btnSubmit" onclick="checkAnswer();">Submit</button>
+        <h1 id="message"><br><h1>
       </div>
 
     </main><!-- /.container -->
 
   <script>
     var problem = document.getElementById("problem");
-    problem.innerHTML = number1 + "+" + number2 + "?<br>";
+    var answerField = document.getElementById("answerField");
+
+    problem.innerHTML = number1 + " + " + number2 + "?<br>";
 
     function checkAnswer()
     {
-      var number1 = (getRandomInt(5));
-      console.log(number1);
+      var answer = number1 + number2;
+
+      if (answerField.value == answer)
+      {
+          answerField.style.background = "white";
+          answerField.value = "";
+          document.getElementById("message").innerHTML = "";
+          generateNewProblem();
+      }
+      else
+      {
+          answerField.style.background="#f75a00";
+          document.getElementById("message").innerHTML = "Try Again";
+      }
+      //console.log(number1);
+    }
+
+    function generateNewProblem()
+    {
+      number1 = getRandomInt(max);
+      number2 = getRandomInt(max);
+
+      problem.innerHTML = number1 + " + " + number2 + "?<br>";
     }
   </script>
 
