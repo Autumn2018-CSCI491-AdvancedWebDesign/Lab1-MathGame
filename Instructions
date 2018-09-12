@@ -1,0 +1,13 @@
+9.10 - create a math game for addition, subtraction, multiplication, division
+
+- have it first in the file and then figure out how to put it into a separate file
+
+- level up every time they get 5 correct
+
+- should be 0-10, 10-20, 20-30, etc.
+
+- check to see if a number was entered
+
+- make sure it's not empty
+
+Lab Due: Thursday September 20th, 2018
