@@ -11,3 +11,10 @@
 - make sure it's not empty
 
 Lab Due: Thursday September 20th, 2018
+
+
+CSCI 491: Thursday, September 13th, 2018 Assignment
+
+What you're going to do:
+Users should be able to add a username that will then be associated with their high score.
+High-scores should be sorted in ascending order

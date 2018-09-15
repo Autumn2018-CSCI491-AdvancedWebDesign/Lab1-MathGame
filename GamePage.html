@@ -18,13 +18,16 @@
 
   <script>
     //When page loads, numbers will be generated and displayed in HTML5
-    var max     = 5;
+    var max     = 10;
+    var score   = 0;
+    var lives   = 3;
+    var level   = 1;
     var number1 = getRandomInt(max);
     var number2 = getRandomInt(max);
 
     function getRandomInt(max)
     {
-      return Math.floor(Math.random() * Math.floor(max));
+      return Math.floor((Math.random() * max) + 1);
     }
   </script>
 
@@ -51,6 +54,9 @@
 
       <div class="starter-template">
         <h1>CSCI 491: Lab 1 - Simple Math Game</h1>
+        <a id="lives">Lives: <br></a>
+        <a id="score">Score: <br></a>
+        <a id="level">Level: <br></a>
         <a class="lead">What is </a>
         <a id="problem"><br></a>
         <input type="text" id="answerField" value="" size="30" maxlength="50">
@@ -64,6 +70,9 @@
     var problem = document.getElementById("problem");
     var answerField = document.getElementById("answerField");
 
+    document.getElementById("lives").innerHTML = "Lives: " + lives + "<br>";
+    document.getElementById("score").innerHTML = "Score: " + score + "<br>";
+    document.getElementById("level").innerHTML = "Level: " + level + "<br>";
     problem.innerHTML = number1 + " + " + number2 + "?<br>";
 
     function checkAnswer()
@@ -75,12 +84,35 @@
           answerField.style.background = "white";
           answerField.value = "";
           document.getElementById("message").innerHTML = "";
+          score++;
+          document.getElementById("score").innerHTML = "Score: " + score + "<br>";
+
+          if (score % 5 == 0)
+          {
+            level++;
+            max+=10;
+
+            document.getElementById("message").innerHTML = "Level Up!";
+            document.getElementById("level").innerHTML = "Level: " + level + "<br>";
+          }
+
           generateNewProblem();
       }
       else
       {
+          lives--;
+          console.log("meh");
+          if (lives < 0)
+          {
+            console.log("blah");
+            document.getElementById("message").innerHTML = "GAME OVER";
+          }
+          else
+          {
+            document.getElementById("message").innerHTML = "Try Again";
+            document.getElementById("lives").innerHTML = "Lives: " + lives + "<br>";
+          }
           answerField.style.background="#f75a00";
-          document.getElementById("message").innerHTML = "Try Again";
       }
       //console.log(number1);
     }
