@@ -1,20 +1,21 @@
+CSCI 491: Advanced Web Design - Lab 1
+
 9.10 - create a math game for addition, subtraction, multiplication, division
 
 - have it first in the file and then figure out how to put it into a separate file
 
-- level up every time they get 5 correct
+DONE - level up every time they get 5 correct
 
-- should be 0-10, 10-20, 20-30, etc.
+DONE - should be 0-10, 10-20, 20-30, etc.
 
-- check to see if a number was entered
+DONE - check to see if a number was entered
 
-- make sure it's not empty
+DONE - make sure it's not empty
 
 Lab Due: Thursday September 20th, 2018
 
 
-CSCI 491: Thursday, September 13th, 2018 Assignment
+Thursday, September 13th, 2018 Additional Requirements:
 
-What you're going to do:
 Users should be able to add a username that will then be associated with their high score.
 High-scores should be sorted in ascending order

@@ -28,9 +28,6 @@
           <li class="nav-item active">
             <a class="nav-link" href="HomePage.html">Home <span class="sr-only">(current)</span></a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">High Scores</a>
-          </li>
         </ul>
       </div>
     </nav>
@@ -39,15 +36,44 @@
 
       <div class="starter-template">
         <h1>CSCI 491: Lab 1 - Simple Math Game</h1>
-        <p class="lead">Welcome new user!</p>
+        <p class="lead">Welcome new player! Please enter your username:</p>
 
-        <form action="GamePage.html">
-            <input type="submit" value="Start Game!" />
-        </form>
+        <input type="text" id="usernameField" value="" size="30" maxlength="50">
+        <button type="button" id="btnStartGame" onclick="checkUsername();">Start Game!</button>
+        <h1 id="message"><br><h1>
 
       </div>
 
     </main><!-- /.container -->
+
+    <script>
+      var eUsernameField = document.getElementById("usernameField");
+      var eMessage       = document.getElementById("message");
+
+      function checkUsername()
+      {
+        if (isValid(eUsernameField.value))
+        {
+          eUsernameField.style.background="white";
+          eMessage.innerHTML = "";
+          //Write username to file, or transfer to next page?
+
+          window.location.replace("GamePage.html");
+        }
+        else
+        {
+          eUsernameField.style.background="#f75a00";
+          eMessage.innerHTML = "Your username cannot contain any special characters.";
+        }
+      }
+
+      function isValid(str)
+      {
+        return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(str);
+      }
+
+    </script>
+
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

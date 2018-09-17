@@ -14,25 +14,29 @@
 
     <!-- Custom styles for this template -->
     <link href="Starter%20Template%20for%20Bootstrap_files/starter-template.css" rel="stylesheet">
+    <!-- <link href="css/simple-sidebar.css" rel="stylesheet"> -->
   </head>
 
   <script>
-    //When page loads, numbers will be generated and displayed in HTML5
-    var max     = 10;
-    var score   = 0;
-    var lives   = 3;
-    var level   = 1;
+    var max     = 10; //Maximum number that can be generated in a problem (starting value)
+    var min     = 0;  //Minimum number that can be generated in a problem (starting value)
+    var score   = 0;  //User-score.  Increments by one for each problem answered correctly.
+    var lives   = 3;  //User-lives.  Decrements by one for each problem answered incorrectly.
+    var level   = 1;  //User-level.  Increments by one everytime the score increments by five.
+
+    //When page loads, numbers will be generated and displayed as the first problem the user needs to answer.
     var number1 = getRandomInt(max);
     var number2 = getRandomInt(max);
 
     function getRandomInt(max)
     {
-      return Math.floor((Math.random() * max) + 1);
+      return Math.floor((Math.random() * max) + min);
     }
   </script>
 
   <body>
 
+    <!-- Menu Bar ontop of the Page -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -44,96 +48,164 @@
             <a class="nav-link" href="HomePage.html">Home <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">High Scores</a>
+            <a class="nav-link" href="#" id="highscores-button">High Scores</a>
           </li>
         </ul>
       </div>
     </nav>
 
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="#">Username ----- Score</a>
+                </li>
+            </ul>
+        </div>
+
     <main role="main" class="container">
 
+      <!-- User interface -->
       <div class="starter-template">
-        <h1>CSCI 491: Lab 1 - Simple Math Game</h1>
+        <h1>Evilscaught Presents: The Math Game</h1>
         <a id="lives">Lives: <br></a>
         <a id="score">Score: <br></a>
         <a id="level">Level: <br></a>
-        <a class="lead">What is </a>
-        <a id="problem"><br></a>
+        <a id="problem"><br>What is <br></a>
+
+        <!-- STARTS HERE -->
+        <div class="answer-container" id="answer-container">
+          <label for="answerField">
+              <p>The answer is: <span class="tooltiptext">Press Enter to Submit Answer</span> </p> <input type="text" id="answerField"/>
+          </label>
+        </div>
+        <!-- ENDS HERE -->
+
+        <!-- OLD CODE
         <input type="text" id="answerField" value="" size="30" maxlength="50">
         <button type="button" id="btnSubmit" onclick="checkAnswer();">Submit</button>
+        /OLD CODE -->
         <h1 id="message"><br><h1>
       </div>
 
     </main><!-- /.container -->
 
-  <script>
-    var problem = document.getElementById("problem");
-    var answerField = document.getElementById("answerField");
+    <nav class="nav navbar-expand-md navbar-dark bg-dark fixed-left">
+    </nav>
 
-    document.getElementById("lives").innerHTML = "Lives: " + lives + "<br>";
-    document.getElementById("score").innerHTML = "Score: " + score + "<br>";
-    document.getElementById("level").innerHTML = "Level: " + level + "<br>";
-    problem.innerHTML = number1 + " + " + number2 + "?<br>";
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    //e is an abbreviation for "element", i.e. eMessage is short for elementMessage.
+    //This syntax is used to indicate that HTML elements are being called.
+    var eProblem     = document.getElementById("problem");
+    var eAnswerField = document.getElementById("answerField");
+    var eMessage     = document.getElementById("message");
+    var eLives       = document.getElementById("lives");
+    var eScore       = document.getElementById("score");
+    var eLevel       = document.getElementById("level");
+
+    eLives.innerHTML = "Lives: " + lives + "<br>";
+    eScore.innerHTML = "Score: " + score + "<br>";
+    eLevel.innerHTML = "Level: " + level + "<br>";
+    eProblem.innerHTML = "<br>What is " + number1 + " + " + number2 + "?<br>";
+
+    eAnswerField.onkeydown = function(event)
+    {
+        if (event.keyCode == 13)
+        {
+            checkAnswer();
+        }
+    }
 
     function checkAnswer()
     {
-      var answer = number1 + number2;
+      var correctAnswer = number1 + number2;
 
-      if (answerField.value == answer)
+      //If the user-entered answer is equal to the correct answer:
+      if (answerField.value == correctAnswer)
       {
-          answerField.style.background = "white";
-          answerField.value = "";
-          document.getElementById("message").innerHTML = "";
           score++;
-          document.getElementById("score").innerHTML = "Score: " + score + "<br>";
 
+          //Reset answer field and any messages on display
+          eAnswerField.value = "";
+          eMessage.innerHTML = "";
+          eScore.innerHTML = "Score: " + score + "<br>";
+
+          //If the score has increment by five, level up!
           if (score % 5 == 0)
           {
             level++;
             max+=10;
+            min+=10;
 
-            document.getElementById("message").innerHTML = "Level Up!";
-            document.getElementById("level").innerHTML = "Level: " + level + "<br>";
+            eMessage.innerHTML = "Level Up!";
+            eLevel.innerHTML = "Level: " + level + "<br>";
           }
 
           generateNewProblem();
       }
+      //If the user did not enter anything:
+      else if (answerField.value == "")
+      {
+        eMessage.innerHTML = "Cannot be Empty!";
+        $("#answer-container").shake();
+      }
+      //If the user-entered answer is not equal to the correct answer:
       else
       {
-          lives--;
-          console.log("meh");
-          if (lives < 0)
-          {
-            console.log("blah");
-            document.getElementById("message").innerHTML = "GAME OVER";
-          }
-          else
-          {
-            document.getElementById("message").innerHTML = "Try Again";
-            document.getElementById("lives").innerHTML = "Lives: " + lives + "<br>";
-          }
-          answerField.style.background="#f75a00";
+        $("#answer-container").shake();
+        lives--;
+        if (lives < 0)
+        {
+          document.getElementById("answer-container").style.visibility = "hidden";
+          eMessage.innerHTML = "GAME OVER :(";
+          eProblem.style.visibility = "hidden";
+          promptHighScores();
+        }
+        else
+        {
+          eMessage.innerHTML = "Try Again";
+          eLives.innerHTML = "Lives: " + lives + "<br>";
+        }
       }
-      //console.log(number1);
     }
 
     function generateNewProblem()
     {
       number1 = getRandomInt(max);
       number2 = getRandomInt(max);
+      problem.innerHTML = "<br>What is " + number1 + " + " + number2 + "?<br>";
+    }
 
-      problem.innerHTML = number1 + " + " + number2 + "?<br>";
+    function promptHighScores()
+    {
+
+    }
+
+    //This function will toggle the highscores sidebar
+    $("#highscores-button").click(function(e)
+    {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+    });
+
+    //This function will make the answer-container shake if the user submits incorrect input.
+    jQuery.fn.shake = function()
+    {
+      this.each(function(i)
+      {
+        $("#answer-container").css({ "position" : "relative" });
+        for (var x = 1; x <= 3; x++)
+        {
+            $(this).animate({ left: -5 }, 10).animate({ left: 0 }, 50).animate({ left: 25 }, 10).animate({ left: 0 }, 50);
+        }
+      });
+      return this;
     }
   </script>
-
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="Starter%20Template%20for%20Bootstrap_files/jquery-3.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-    <script src="Starter%20Template%20for%20Bootstrap_files/popper.js"></script>
-    <script src="Starter%20Template%20for%20Bootstrap_files/bootstrap.js"></script>
-
 
 </body></html>
