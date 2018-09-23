@@ -12,9 +12,10 @@ body
   form-align: center;
 }
 
-/* Original CSS is Above */
+/* --------------------------------------------------------------------------------------*/
+/*CSS below this point styles the page where the user enters the answers to the problems.*/
+/* --------------------------------------------------------------------------------------*/
 
-/*Contains CSS for Game Interface*/
 .answer-container
 {
     margin: auto;
@@ -105,23 +106,74 @@ body
     opacity: 1;
 }
 
-/* END */
+/* ------------------------------------------------------------------*/
+/* CSS Below this point contains formatting for username prompt      */
+/*-------------------------------------------------------------------*/
 
-#intro-container
+.username-prompt
 {
-  border: 1px solid pink;
-  background-color: black;
-  color: #999999;
-  min-height: height;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  form-align: center;
 }
 
-#intro-container-text
+.username-container
 {
-  width: 900px;
-  color: #999999;
-  text-align: justify;
-  color: white;
+    margin: auto;
+    width: 210px;
+    font-size: 16px;
+    background: #5e6266;
+    border: 5px solid #343a40;
 }
+.username-container input[type=text],
+.username-container textarea,
+.username-container label
+{
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 16px;
+    color: white;
+
+}
+.username-container label
+{
+    display:block;
+    margin-bottom: 5px;
+}
+.username-container label > span
+{
+    display: inline-block;
+    float: left;
+    width: 150px;
+}
+.username-container input[type=text],
+.username-container input[type=email]
+{
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed pink;
+    width: 170px;
+    outline: none;
+    font-style: italic;
+    text-align: center;
+}
+
+.username-container textarea:focus,
+.username-container input[type=text]:focus,
+.username-container input[type=email]:focus,
+.username-container input[type=email]:focus
+{
+    border-bottom: 1px solid #D9FFA9;
+}
+
+.username-container
+{
+    position: relative;
+    display: inline-block;
+}
+
+/* ------------------------------------------------------------------*/
+/* CSS Below this point contains formatting for high-scores sidebar. */
+/*-------------------------------------------------------------------*/
 
 #wrapper
 {

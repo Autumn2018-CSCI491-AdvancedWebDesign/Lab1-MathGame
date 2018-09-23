@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -24,19 +25,50 @@
     var lives   = 3;  //User-lives.  Decrements by one for each problem answered incorrectly.
     var level   = 1;  //User-level.  Increments by one everytime the score increments by five.
 
-    //When page loads, numbers will be generated and displayed as the first problem the user needs to answer.
-    var number1 = getRandomInt(max);
-    var number2 = getRandomInt(max);
+    var numAddends     = 20;
+    var JSONarray   = {"numbers":[]};
+    var num1JSONlocation;
+    var num2JSONlocation;
 
-    function getRandomInt(max)
+    generateNumbers();
+    chooseProblems();
+
+    function getRandomInt(max, min)
     {
       return Math.floor((Math.random() * max) + min);
     }
+
+    function generateNumbers()
+    {
+      JSONarray.numbers = [];
+
+      for (index = 0; index < numAddends; index++)
+      {
+        JSONarray.numbers.push(getRandomInt(max, min).toString());
+      }
+    }
+
+    function chooseProblems()
+    {
+      num1JSONlocation = getRandomInt(JSONarray.numbers.length, 0);
+      num2JSONlocation = getRandomInt(JSONarray.numbers.length, 0);
+
+      //num1 & num2 JSON location must be odd.
+      if ( (num1JSONlocation % 2) == 0)
+      {
+        num1JSONlocation++;
+      }
+      if ( (num2JSONlocation % 2) == 0)
+      {
+        num2JSONlocation++;
+      }
+    }
+
   </script>
 
   <body>
 
-    <!-- Menu Bar ontop of the Page -->
+    <!-- Menu bar ontop of the page -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -54,16 +86,14 @@
       </div>
     </nav>
 
+    <!-- Highscores sidebar -->
     <div id="wrapper">
-
-        <!-- Sidebar -->
-        <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
-                <li>
-                    <a href="#">Username ----- Score</a>
-                </li>
-            </ul>
-        </div>
+      <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+          <p id=highscoresToHTML></p>
+        </ul>
+      </div>
+    </div>
 
     <main role="main" class="container">
 
@@ -73,61 +103,124 @@
         <a id="lives">Lives: <br></a>
         <a id="score">Score: <br></a>
         <a id="level">Level: <br></a>
-        <a id="problem"><br>What is <br></a>
+        <a id="problem"></a>
 
-        <!-- STARTS HERE -->
         <div class="answer-container" id="answer-container">
           <label for="answerField">
               <p>The answer is: <span class="tooltiptext">Press Enter to Submit Answer</span> </p> <input type="text" id="answerField"/>
           </label>
         </div>
-        <!-- ENDS HERE -->
 
-        <!-- OLD CODE
-        <input type="text" id="answerField" value="" size="30" maxlength="50">
-        <button type="button" id="btnSubmit" onclick="checkAnswer();">Submit</button>
-        /OLD CODE -->
-        <h1 id="message"><br><h1>
+        <h1 id="message"><br></h1>
+        <a id="tryAgain" style="visibility: hidden; color: white; text-decoration: underline;" href="#" onclick="resetGame();">Try Again?<br></a>
+      </div>
+
+      <div class="username-prompt" id="usernamePrompt">
+        <h3>Enter your username to record your current score<br>(only a new highscore will result in update)</h3>
+        <div class="username-container" id="username-container">
+          <label for="usernameField">
+            <p>My username is: </p> <input type="text" id="usernameField"/>
+          </label>
+        </div>
       </div>
 
     </main><!-- /.container -->
 
-    <nav class="nav navbar-expand-md navbar-dark bg-dark fixed-left">
-    </nav>
+    <!-- Allows the menu-bar ontop of page to adjust to page size -->
+    <nav class="nav navbar-expand-md navbar-dark bg-dark fixed-left"> </nav>
 
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Required libraries for highscores side-bar to render and animate -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-  <script>
-    //e is an abbreviation for "element", i.e. eMessage is short for elementMessage.
-    //This syntax is used to indicate that HTML elements are being called.
-    var eProblem     = document.getElementById("problem");
-    var eAnswerField = document.getElementById("answerField");
-    var eMessage     = document.getElementById("message");
-    var eLives       = document.getElementById("lives");
-    var eScore       = document.getElementById("score");
-    var eLevel       = document.getElementById("level");
+    <script>
+      //e is an abbreviation for "element", i.e. eMessage is short for elementMessage.
+      //This syntax is used to indicate that HTML elements are being called.
+      var eProblem     = document.getElementById("problem");
+      var eAnswerField = document.getElementById("answerField");
+      var eMessage     = document.getElementById("message");
+      var eTryAgain    = document.getElementById("tryAgain");
+      var eLives       = document.getElementById("lives");
+      var eScore       = document.getElementById("score");
+      var eLevel       = document.getElementById("level");
 
-    eLives.innerHTML = "Lives: " + lives + "<br>";
-    eScore.innerHTML = "Score: " + score + "<br>";
-    eLevel.innerHTML = "Level: " + level + "<br>";
-    eProblem.innerHTML = "<br>What is " + number1 + " + " + number2 + "?<br>";
+      var eUsernamePrompt = document.getElementById("usernamePrompt");
+      var eUsernameField  = document.getElementById("usernameField");
 
-    eAnswerField.onkeydown = function(event)
-    {
+      var usernamesJSON  = null;
+      var highscoresJSON = null;
+
+      eLives.innerHTML = "Lives: " + lives + "<br>";
+      eScore.innerHTML = "Score: " + score + "<br>";
+      eLevel.innerHTML = "Level: " + level + "<br>";
+      eProblem.innerHTML = "<br>What is " + JSONarray.numbers[num1JSONlocation] + " + " + JSONarray.numbers[num2JSONlocation] + "?<br>";
+
+      document.getElementById("highscoresToHTML").innerHTML = "<li><a>No Highscores Yet.</a></li>";
+
+      //This function allows user to press "enter" to submit the answer to thier problem.
+      eAnswerField.onkeydown = function(event)
+      {
         if (event.keyCode == 13)
         {
-            checkAnswer();
+          checkAnswer();
         }
-    }
+      }
 
-    function checkAnswer()
-    {
-      var correctAnswer = number1 + number2;
-
-      //If the user-entered answer is equal to the correct answer:
-      if (answerField.value == correctAnswer)
+      //This function allows user to press "enter" to submit their username and record their highscore.
+      eUsernameField.onkeydown = function(event)
       {
+        if (event.keyCode == 13)
+        {
+          logHighScore();
+        }
+      }
+
+      function resetGame()
+      {
+        lives = 3;
+        score = 0;
+        level = 0;
+        max = 10;
+        min = 0;
+        eLives.innerHTML = "Lives: " + lives + "<br>";
+        eScore.innerHTML = "Score: " + score + "<br>";
+        eLevel.innerHTML = "Level: " + level + "<br>";
+        eMessage.innerHTML = "";
+        document.getElementById("answer-container").style.visibility = "visible";
+        eProblem.style.visibility = "visible";
+        eTryAgain.style.visibility = "hidden";
+        generateNumbers();
+        generateNewProblem();
+      }
+
+      //This function will toggle the highscores sidebar
+      $("#highscores-button").click(function(e)
+      {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+      });
+
+      //This function will make the answer-container shake if the user submits incorrect input.
+      jQuery.fn.shake = function()
+      {
+        this.each(function(i)
+        {
+          $("#answer-container").css({ "position" : "relative" });
+          for (var x = 1; x <= 3; x++)
+          {
+            $(this).animate({ left: -5 }, 10).animate({ left: 0 }, 50).animate({ left: 25 }, 10).animate({ left: 0 }, 50);
+          }
+        });
+        return this;
+      }
+
+      function checkAnswer()
+      {
+        var correctAnswer = parseInt(JSONarray.numbers[num1JSONlocation]) + parseInt(JSONarray.numbers[num2JSONlocation]);
+
+        //If the user-entered answer is equal to the correct answer:
+        if (answerField.value == correctAnswer)
+        {
           score++;
 
           //Reset answer field and any messages on display
@@ -141,71 +234,104 @@
             level++;
             max+=10;
             min+=10;
+            generateNumbers();
 
             eMessage.innerHTML = "Level Up!";
             eLevel.innerHTML = "Level: " + level + "<br>";
           }
 
           generateNewProblem();
-      }
-      //If the user did not enter anything:
-      else if (answerField.value == "")
-      {
-        eMessage.innerHTML = "Cannot be Empty!";
-        $("#answer-container").shake();
-      }
-      //If the user-entered answer is not equal to the correct answer:
-      else
-      {
-        $("#answer-container").shake();
-        lives--;
-        if (lives < 0)
-        {
-          document.getElementById("answer-container").style.visibility = "hidden";
-          eMessage.innerHTML = "GAME OVER :(";
-          eProblem.style.visibility = "hidden";
-          promptHighScores();
         }
+          //If the user did not enter anything:
+        else if (answerField.value == "")
+        {
+          eMessage.innerHTML = "Cannot be Empty!";
+          $("#answer-container").shake();
+        }
+        //If the user-entered answer is not equal to the correct answer:
         else
         {
-          eMessage.innerHTML = "Try Again";
-          eLives.innerHTML = "Lives: " + lives + "<br>";
+          $("#answer-container").shake();
+          lives--;
+          if (lives < 0)
+          {
+            document.getElementById("answer-container").style.visibility = "hidden";
+            eMessage.innerHTML = "GAME OVER";
+            eTryAgain.style.visibility = "visible";
+            eProblem.style.visibility = "hidden";
+            eUsernameField.style.visibility = "visible";
+          }
+          else
+          {
+            eMessage.innerHTML = "Try Again";
+            eLives.innerHTML = "Lives: " + lives + "<br>";
+          }
         }
       }
-    }
 
-    function generateNewProblem()
-    {
-      number1 = getRandomInt(max);
-      number2 = getRandomInt(max);
-      problem.innerHTML = "<br>What is " + number1 + " + " + number2 + "?<br>";
-    }
-
-    function promptHighScores()
-    {
-
-    }
-
-    //This function will toggle the highscores sidebar
-    $("#highscores-button").click(function(e)
-    {
-      e.preventDefault();
-      $("#wrapper").toggleClass("toggled");
-    });
-
-    //This function will make the answer-container shake if the user submits incorrect input.
-    jQuery.fn.shake = function()
-    {
-      this.each(function(i)
+      function generateNewProblem()
       {
-        $("#answer-container").css({ "position" : "relative" });
-        for (var x = 1; x <= 3; x++)
-        {
-            $(this).animate({ left: -5 }, 10).animate({ left: 0 }, 50).animate({ left: 25 }, 10).animate({ left: 0 }, 50);
-        }
-      });
-      return this;
-    }
-  </script>
+        chooseProblems();
+        document.getElementById("problem").innerHTML = "<br>What is " + JSONarray.numbers[num1JSONlocation] + " + " + JSONarray.numbers[num2JSONlocation] + "?<br>";
+      }
 
-</body></html>
+      //'highscores' and 'usernames' are parallel arrays, they both have the same length
+      function logHighScore()
+      {
+          var usernames = JSON.parse(usernamesJSON);
+          var highscores = JSON.parse(highscoresJSON);
+
+          //If there are no existing usernames and highscores make a new entry
+          if ( (usernames == null) && (highscores == null) )
+          {
+            usernames = [];
+            highscores = [];
+            usernames.push(eUsernameField.value);
+            highscores.push(score);
+          }
+          //If the entered username already exists, replace their highscore only if ...
+          //... their new highscore is greater than the old one.
+          else if ( usernames.includes(eUsernameField.value) )
+          {
+            for (index = 0; index < highscores.length; index++)
+            {
+              if ( (eUsernameField.value == usernames[index]) && (score > highscores[index]) )
+              {
+                highscores[index] = score;
+              }
+            }
+          }
+          //Otherwise, make a new entry for that username.
+          else
+          {
+            //Add new username & highscore respective to its rank in the list of existing highscores
+            for (index = 0; index < highscores.length; index++)
+            {
+              if (score <= highscores[index])
+              {
+                highscores.splice(index, 0, score);
+                usernames.splice(index, 0, eUsernameField.value);
+                break;
+              }
+            }
+          }
+          eUsernameField.value = "";
+
+          //Update highscores and usernames sidebar
+          var html = "";
+          for (index = highscores.length - 1; index >= 0; index--)
+          {
+            html += "<li><a>" + usernames[index] + ": " + highscores[index] + "</a></li>";
+          }
+          document.getElementById("highscoresToHTML").innerHTML = html;
+          //Toggle highscores sidebar to visible
+          $("#wrapper").toggleClass("toggled");
+
+
+          //Convert highscores and usernames back to JSON
+          usernamesJSON = JSON.stringify(usernames);
+          highscoresJSON = JSON.stringify(highscores);
+      }
+    </script>
+  </body>
+</html>
